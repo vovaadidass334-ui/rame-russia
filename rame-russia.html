@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RAME RUSSIA — Играй в Криминальную Россию на ПК</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        display: ['Unbounded', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            light: '#ff6a20',
+                            DEFAULT: '#FF4F00',
+                            dark: '#cc3f00',
+                        },
+                        staff: '#212428',
+                        gaGreen: '#008000',
+                        samara: '#00A8E8',
+                        darkBg: '#0b0d0f',
+                        darkCard: '#14171a',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(255, 79, 0, 0.4)',
+                        'glow-heavy': '0 0 35px rgba(255, 79, 0, 0.65)',
+                        'glow-green': '0 0 20px rgba(9, 189, 114, 0.4)',
+                        'glow-samara': '0 0 20px rgba(0, 168, 232, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #0b0d0f;
+            color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0d0f; }
+        ::-webkit-scrollbar-thumb { background: #FF4F00; border-radius: 10px; }
+
+        .bg-grid {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.04) 1px, transparent 0);
+            background-size: 32px 32px;
+        }
+
+        .ambient-light-orange {
+            position: absolute;
+            width: 45vw;
+            height: 45vw;
+            background: radial-gradient(circle, rgba(255, 79, 0, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(70px);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .ambient-light-samara {
+            position: absolute;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(0, 168, 232, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(70px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+            color: transparent;
+        }
+
+        #mobileMenu {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        #mobileMenu.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feature-card {
+            background: linear-gradient(145deg, #14171a, #0f1113);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 24px;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            border-color: #FF4F00;
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px -10px rgba(255, 79, 0, 0.35);
+        }
+
+        .btn-main {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .btn-main::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: 0.5s;
+        }
+        .btn-main:hover::before {
+            left: 100%;
+        }
+
+        .forum-badge {
+            display: inline-block;
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .badge-samara { background-color: #00A8E8; color: #ffffff; border-color: #00A8E8; box-shadow: 0 0 12px rgba(0, 168, 232, 0.6); }
+        .badge-staff { background-color: #212428; color: #ffffff; border-color: #383d44; box-shadow: 0 0 12px rgba(33, 36, 40, 0.6); }
+        .badge-gts { background-color: #FF4F00; color: #ffffff; border-color: #FF4F00; box-shadow: 0 0 12px rgba(255, 79, 0, 0.6); }
+        .badge-premium {
+            background: linear-gradient(45deg, #ffa500, #ff4500, #ffd700, #ffa500);
+            background-size: 400% 400%;
+            animation: premRainbow 6s ease infinite;
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 0 12px rgba(255, 165, 0, 0.6);
+        }
+        @keyframes premRainbow {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+
+        @keyframes downloadPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(255, 79, 0, 0.6); }
+            50% { transform: scale(1.03); box-shadow: 0 0 40px rgba(255, 79, 0, 0.9); }
+        }
+        .pulse-btn {
+            animation: downloadPulse 2.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased overflow-x-hidden">
+
+    <div class="bg-grid fixed inset-0 z-[-2]"></div>
+    <div class="ambient-light-orange top-[-10%] right-[-10%]"></div>
+    <div class="ambient-light-samara bottom-[15%] left-[-10%]"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-[100] transition-all duration-300" id="mainHeader">
+        <div class="container mx-auto px-5 lg:px-10">
+            <div class="flex items-center justify-between h-20 md:h-24">
+                
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-brand rounded-2xl flex items-center justify-center shadow-glow group-hover:rotate-6 transition-transform">
+                        <span class="font-display font-black text-xl md:text-2xl italic text-white">R</span>
+                    </div>
+                    <span class="font-display font-black text-lg md:text-xl tracking-tighter uppercase">
+                        RAME <span class="text-brand">RUSSIA</span>
+                    </span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a href="#how-to-play" class="text-xs font-bold uppercase tracking-widest text-white/70 hover:text-brand transition-colors">Как играть</a>
+                    <a href="#features" class="text-xs font-bold uppercase tracking-widest text-white/70 hover:text-brand transition-colors">О проекте</a>
+                    <a href="#donate" class="text-xs font-bold uppercase tracking-widest text-white/70 hover:text-brand transition-colors">Донат</a>
+                    <a href="https://ramerussia.samp.date/index.php" target="_blank" class="text-xs font-bold uppercase tracking-widest text-white/70 hover:text-brand transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-comments text-brand"></i> Форум
+                    </a>
+                </nav>
+
+                <div class="hidden lg:flex items-center gap-4">
+                    <div class="hidden xl:flex items-center gap-2 px-3.5 py-2 bg-staff rounded-xl border border-white/5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-white/80">Онлайн: <span id="headerOnline" class="text-brand font-black">35</span></span>
+                    </div>
+                    <a href="#how-to-play" class="btn-main px-7 py-3.5 bg-brand text-white font-display font-bold text-xs uppercase tracking-[0.15em] rounded-2xl shadow-glow hover:bg-brand-light transition-all">
+                        Начать игру
+                    </a>
+                </div>
+
+                <button class="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 z-[110]" id="menuBtn" aria-label="Открыть меню">
+                    <span class="w-6 h-0.5 bg-white transition-all duration-300" id="bar1"></span>
+                    <span class="w-6 h-0.5 bg-white transition-all duration-300" id="bar2"></span>
+                    <span class="w-6 h-0.5 bg-white transition-all duration-300" id="bar3"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="fixed inset-0 bg-darkBg/95 backdrop-blur-2xl z-[105] flex flex-col items-center justify-center gap-7 lg:hidden" id="mobileMenu">
+            <a href="#how-to-play" class="mobile-link text-xl font-display font-bold uppercase tracking-wide">Как играть</a>
+            <a href="#features" class="mobile-link text-xl font-display font-bold uppercase tracking-wide">О проекте</a>
+            <a href="#donate" class="mobile-link text-xl font-display font-bold uppercase tracking-wide">Донат</a>
+            <a href="https://ramerussia.samp.date/index.php" target="_blank" class="mobile-link text-xl font-display font-bold uppercase tracking-wide text-brand flex items-center gap-2">
+                <i class="fa-solid fa-comments"></i> Форум
+            </a>
+            <div class="pt-6 w-full max-w-xs px-5">
+                <a href="#how-to-play" class="mobile-link block w-full text-center py-4 bg-brand text-white font-display font-bold text-xs uppercase tracking-widest rounded-2xl shadow-glow">
+                    Начать игру
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+        <div class="container mx-auto px-5 lg:px-10 z-10">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                
+                <div class="text-center lg:text-left space-y-7">
+                    
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
+                        <span class="forum-badge badge-samara">
+                            <i class="fa-solid fa-server mr-1"></i> Единственный Сервер
+                        </span>
+                        <span class="forum-badge badge-gts">
+                            <i class="fa-solid fa-fire mr-1"></i> CRMP 2026
+                        </span>
+                        <span class="forum-badge badge-premium">
+                            <i class="fa-solid fa-crown mr-1"></i> PREM
+                        </span>
+                    </div>
+
+                    <h1 class="font-display font-black text-4xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none uppercase italic">
+                        RAME <br>
+                        <span class="text-brand drop-shadow-[0_0_35px_rgba(255,79,0,0.6)]">RUSSIA</span>
+                    </h1>
+
+                    <p class="text-white/70 text-base md:text-lg max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                        Погрузись в атмосферу криминальной России на единственном сервере проекте. Создай свою историю: от обычного автомеханика до главы влиятельной ОПГ!
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#how-to-play" class="btn-main w-full sm:w-auto px-9 py-4 bg-brand text-white font-display font-black text-xs sm:text-sm uppercase tracking-widest rounded-2xl shadow-glow-heavy text-center">
+                            <i class="fa-solid fa-play mr-2"></i> Начать игру
+                        </a>
+                        <a href="#how-to-play" class="btn-main w-full sm:w-auto px-9 py-4 bg-staff border border-white/10 hover:border-brand/50 text-white font-display font-bold text-xs sm:text-sm uppercase tracking-widest rounded-2xl transition-all text-center">
+                            <i class="fa-solid fa-gift mr-2 text-brand"></i> Играть бесплатно
+                        </a>
+                    </div>
+
+                    <div class="flex items-center justify-center lg:justify-start gap-10 pt-6 border-t border-white/10">
+                        <div class="text-center lg:text-left">
+                            <div class="flex items-center justify-center lg:justify-start gap-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                                <div class="text-2xl sm:text-3xl font-display font-black text-white" id="totalPlayers">34</div>
+                            </div>
+                            <div class="text-[10px] uppercase font-bold tracking-widest text-white/50 mt-1">Игроков в сети</div>
+                        </div>
+                        <div class="h-10 w-[1px] bg-white/10"></div>
+                        <div class="text-center lg:text-left">
+                            <div class="text-2xl sm:text-3xl font-display font-black text-samara">1</div>
+                            <div class="text-[10px] uppercase font-bold tracking-widest text-white/50 mt-1">Единственный сервер</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="relative">
+                    <div class="absolute inset-0 bg-brand/20 blur-[100px] rounded-full"></div>
+                    <div class="relative z-10 bg-darkCard border border-white/10 p-4 sm:p-6 rounded-[32px] shadow-2xl">
+                        <div class="bg-gradient-to-br from-[#1a1d21] to-[#111316] rounded-2xl p-6 border border-white/5 text-center sm:text-left">
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                                <div>
+                                    <span class="forum-badge badge-samara mb-2">Основной Сервер</span>
+                                    <h3 class="font-display font-black text-xl sm:text-2xl uppercase italic">RAME RUSSIA | ONE</h3>
+                                </div>
+                                <div class="px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-bold uppercase flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+                                </div>
+                            </div>
+
+                            <div class="space-y-3 mb-6 text-sm text-white/70">
+                                <div class="flex justify-between border-b border-white/5 pb-2">
+                                    <span>Платформа:</span>
+                                    <span class="font-bold text-white">ПК (CRMP / SAMP)</span>
+                                </div>
+                                <div class="flex justify-between border-b border-white/5 pb-2">
+                                    <span>Средний онлайн:</span>
+                                    <span class="font-bold text-white">20 - 50 игроков</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Официальный Форум:</span>
+                                    <a href="https://ramerussia.samp.date/index.php" target="_blank" class="font-bold text-brand hover:underline">Перейти</a>
+                                </div>
+                            </div>
+
+                            <a href="#how-to-play" class="block w-full text-center py-3.5 bg-brand/20 border border-brand/50 hover:bg-brand text-white font-display font-bold text-xs uppercase tracking-widest rounded-xl transition-all">
+                                Присоединиться к серверу
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="absolute bottom-[-2%] left-0 w-full overflow-hidden pointer-events-none select-none opacity-10 hidden md:block">
+            <div class="text-outline font-display font-black text-[22vw] leading-none uppercase whitespace-nowrap">RAME RUSSIA</div>
+        </div>
+    </section>
+
+    <!-- How To Play Section -->
+    <section id="how-to-play" class="py-20 md:py-28 bg-darkCard/40 border-y border-white/5 relative">
+        <div class="container mx-auto px-5 lg:px-10">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="forum-badge badge-gts mb-3">БЫСТРЫЙ СТАРТ</span>
+                <h2 class="font-display font-black text-3xl md:text-5xl uppercase italic mb-4">
+                    Как начать <span class="text-brand">игру?</span>
+                </h2>
+                <p class="text-white/60 text-sm md:text-base font-medium">
+                    Установка займет всего несколько минут. Скачай сборку и заходи на сервер!
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                
+                <div class="feature-card p-8 md:p-10 rounded-[32px] relative overflow-hidden border-brand/40 bg-gradient-to-b from-[#1c1f24] to-[#121417]">
+                    <div class="absolute -right-3 -top-3 text-7xl font-display font-black text-brand/10">01</div>
+                    <div class="w-14 h-14 bg-brand rounded-2xl flex items-center justify-center text-white text-xl mb-6 shadow-glow">
+                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl uppercase mb-3">1. Скачай клиент</h3>
+                    <p class="text-white/60 text-sm leading-relaxed mb-6">
+                        Скачай готовую сборку игры с нашего надежного хранилища на Яндекс.Диске.
+                    </p>
+                    
+                    <a href="https://disk.yandex.ru/d/Oj6dxE4V0inShA" target="_blank" class="pulse-btn inline-flex items-center justify-center gap-3 w-full py-4 bg-brand text-white font-display font-black text-xs uppercase tracking-widest rounded-2xl shadow-glow hover:bg-brand-light transition-all">
+                        <i class="fa-solid fa-download text-base"></i> Скачать файл
+                    </a>
+                </div>
+
+                <div class="feature-card p-8 md:p-10 rounded-[32px] relative overflow-hidden">
+                    <div class="absolute -right-3 -top-3 text-7xl font-display font-black text-white/5">02</div>
+                    <div class="w-14 h-14 bg-staff border border-white/10 rounded-2xl flex items-center justify-center text-white text-xl mb-6">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl uppercase mb-3">2. Установи сборку</h3>
+                    <p class="text-white/60 text-sm leading-relaxed mb-6">
+                        Распакуй скачанный архив в удобную папку на своем компьютере.
+                    </p>
+                    <span class="inline-block px-3 py-1.5 bg-white/5 rounded-xl text-white/40 text-[11px] font-bold uppercase tracking-wider">
+                        Простая установка
+                    </span>
+                </div>
+
+                <div class="feature-card p-8 md:p-10 rounded-[32px] relative overflow-hidden">
+                    <div class="absolute -right-3 -top-3 text-7xl font-display font-black text-white/5">03</div>
+                    <div class="w-14 h-14 bg-samara/20 border border-samara/40 rounded-2xl flex items-center justify-center text-samara text-xl mb-6 shadow-glow-samara">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl uppercase mb-3">3. Заходи в игру</h3>
+                    <p class="text-white/60 text-sm leading-relaxed mb-6">
+                        Укажи свой Nick_Name, запускай клиент и подключайся к единственному серверу RAME RUSSIA!
+                    </p>
+                    <a href="https://ramerussia.samp.date/index.php" target="_blank" class="inline-flex items-center gap-2 text-samara font-bold text-xs uppercase tracking-widest hover:underline">
+                        Перейти на форум <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- ЗАМЕНЕННЫЙ БЛОК НА КРАСИВЫЙ ИНТЕРАКТИВНЫЙ БЛОК СТАТУСА СЕРВЕРА -->
+            <div class="bg-gradient-to-br from-[#161a22] via-[#12141a] to-[#0f1115] border border-white/10 p-8 md:p-12 rounded-[36px] max-w-4xl mx-auto shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-brand/10 blur-[90px] pointer-events-none"></div>
+
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-4 text-center md:text-left">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Сервер работает стабильно
+                        </div>
+                        <h3 class="font-display font-black text-2xl md:text-3xl uppercase italic leading-tight">
+                            ПРЯМАЯ ЗАГРУЗКА ИГРЫ
+                        </h3>
+                        <p class="text-white/60 text-sm leading-relaxed">
+                            Нажми на кнопку загрузки, чтобы мгновенно получить установщик с Яндекс.Диска и начать играть вместе с нами.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center gap-4 bg-black/40 border border-white/5 p-6 rounded-3xl">
+                        <div class="text-center">
+                            <div class="text-xs uppercase tracking-widest text-white/40 font-bold mb-1">Версия клиента</div>
+                            <div class="text-lg font-display font-black text-white">CRMP 0.3.7 / RAME v1.2</div>
+                        </div>
+                        <a href="https://disk.yandex.ru/d/Oj6dxE4V0inShA" target="_blank" class="btn-main pulse-btn inline-flex items-center justify-center gap-3 w-full py-4 bg-brand text-white font-display font-black text-xs uppercase tracking-widest rounded-2xl shadow-glow-heavy hover:bg-brand-light transition-all">
+                            <i class="fa-solid fa-cloud-arrow-down text-lg"></i> СКАЧАТЬ С ЯНДЕКС.ДИСКА
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 md:py-28">
+        <div class="container mx-auto px-5 lg:px-10">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="forum-badge badge-staff mb-3">О ПРОЕКТЕ</span>
+                <h2 class="font-display font-black text-3xl md:text-5xl uppercase italic mb-4">
+                    Почему <span class="text-brand">RAME RUSSIA?</span>
+                </h2>
+                <p class="text-white/60 text-sm md:text-base">Преимущества нашего сервера, созданные для комфортной игры</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <div class="feature-card p-8 text-center">
+                    <div class="w-16 h-16 mx-auto bg-brand/10 border border-brand/30 rounded-2xl flex items-center justify-center text-brand text-2xl mb-6 shadow-glow">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg uppercase mb-3">Дружное комьюнити</h3>
+                    <p class="text-white/60 text-sm leading-relaxed">
+                        Стабильный онлайн 20-50 игроков. Адекватная администрация и активные фракции.
+                    </p>
+                </div>
+
+                <div class="feature-card p-8 text-center">
+                    <div class="w-16 h-16 mx-auto bg-samara/10 border border-samara/30 rounded-2xl flex items-center justify-center text-samara text-2xl mb-6 shadow-glow-samara">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg uppercase mb-3">Стабильный сервер</h3>
+                    <p class="text-white/60 text-sm leading-relaxed">
+                        Надежное хостинг-оборудование с минимальным пингом и защитой от сбоев 24/7.
+                    </p>
+                </div>
+
+                <div class="feature-card p-8 text-center">
+                    <div class="w-16 h-16 mx-auto bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-emerald-400 text-2xl mb-6 shadow-glow-green">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg uppercase mb-3">Официальный Форум</h3>
+                    <p class="text-white/60 text-sm leading-relaxed">
+                        Удобная форумная система для подачи отчетов, жалоб и общения с Командой Проекта.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Donate Section -->
+    <section id="donate" class="py-20 md:py-28 bg-darkCard/40 border-t border-white/5">
+        <div class="container mx-auto px-5 lg:px-10">
+            <div class="max-w-4xl mx-auto bg-gradient-to-br from-[#16191d] to-[#0f1113] border border-white/10 rounded-[40px] p-8 md:p-14 relative overflow-hidden shadow-2xl">
+                
+                <div class="grid lg:grid-cols-2 gap-10 items-center">
+                    <div>
+                        <span class="forum-badge badge-premium mb-3">МАГАЗИН</span>
+                        <h2 class="font-display font-black text-3xl md:text-4xl uppercase italic mb-4">
+                            Донат <span class="text-brand">RAME</span>
+                        </h2>
+                        <p class="text-white/60 text-sm leading-relaxed mb-6">
+                            Поддержи развитие единственного сервера и получи уникальные бонусы, авто и VIP-статусы.
+                        </p>
+                        
+                        <div class="p-4 bg-brand/10 border border-brand/30 rounded-2xl flex items-center gap-4 mb-4">
+                            <div class="w-10 h-10 bg-brand rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-glow">
+                                X2
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold uppercase tracking-wider text-brand">Бонус пополнения</div>
+                                <div class="text-[11px] text-white/50">1 Рубль = 2 Rame Coins</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="space-y-4" onsubmit="event.preventDefault()">
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold tracking-widest text-white/50 mb-2 ml-1">Игровой Nick_Name</label>
+                            <input type="text" placeholder="Ivan_Ivanov" class="w-full h-14 bg-black/50 border border-white/10 rounded-2xl px-5 text-white font-bold placeholder:text-white/20 focus:border-brand outline-none transition-all text-sm">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold tracking-widest text-white/50 mb-2 ml-1">Сумма (₽)</label>
+                                <input type="number" id="donAmount" placeholder="500" value="500" class="w-full h-14 bg-black/50 border border-white/10 rounded-2xl px-5 text-white font-bold outline-none focus:border-brand transition-all text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold tracking-widest text-brand mb-2 ml-1">Получишь</label>
+                                <div id="donCoins" class="w-full h-14 bg-brand/15 border border-brand/40 rounded-2xl flex items-center px-5 text-brand font-display font-bold text-sm">1000 RC</div>
+                            </div>
+                        </div>
+                        <button class="btn-main w-full py-4 bg-brand text-white font-display font-black text-xs uppercase tracking-widest rounded-2xl shadow-glow hover:bg-brand-light transition-all">
+                            Перейти к оплате
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/10 bg-black">
+        <div class="container mx-auto px-5 lg:px-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                
+                <div class="flex flex-col items-center md:items-start gap-3">
+                    <a href="#" class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-brand rounded-xl flex items-center justify-center shadow-glow">
+                            <span class="font-display font-black text-sm italic text-white">R</span>
+                        </div>
+                        <span class="font-display font-black text-sm tracking-tighter uppercase">
+                            RAME <span class="text-brand">RUSSIA</span>
+                        </span>
+                    </a>
+                    <p class="text-[11px] text-white/40 font-medium">© 2026 RAME RUSSIA PROJECT. Единственный Сервер.</p>
+                </div>
+
+                <div class="flex items-center gap-6 text-xs font-bold uppercase tracking-widest text-white/60">
+                    <a href="https://ramerussia.samp.date/index.php" target="_blank" class="hover:text-brand transition-colors">Форум</a>
+                    <a href="https://disk.yandex.ru/d/Oj6dxE4V0inShA" target="_blank" class="hover:text-brand transition-colors">Яндекс.Диск</a>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('mainHeader');
+            if (window.scrollY > 40) {
+                header.classList.add('bg-darkBg/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+            } else {
+                header.classList.remove('bg-darkBg/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+            }
+        });
+
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const bar1 = document.getElementById('bar1');
+        const bar2 = document.getElementById('bar2');
+        const bar3 = document.getElementById('bar3');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('active');
+            bar1.classList.toggle('rotate-45');
+            bar1.classList.toggle('translate-y-2');
+            bar2.classList.toggle('opacity-0');
+            bar3.classList.toggle('-rotate-45');
+            bar3.classList.toggle('-translate-y-2');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', () => {
+            if (mobileMenu.classList.contains('active')) toggleMenu();
+        }));
+
+        const donAmount = document.getElementById('donAmount');
+        const donCoins = document.getElementById('donCoins');
+
+        if (donAmount && donCoins) {
+            donAmount.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value) || 0;
+                donCoins.innerText = (val * 2) + " RC";
+            });
+        }
+
+        let currentPlayers = Math.floor(Math.random() * (45 - 24 + 1)) + 24;
+        const totalPlayersElem = document.getElementById('totalPlayers');
+        const headerOnlineElem = document.getElementById('headerOnline');
+        
+        if (totalPlayersElem) {
+            totalPlayersElem.innerText = currentPlayers;
+            if (headerOnlineElem) headerOnlineElem.innerText = currentPlayers;
+            
+            setInterval(() => {
+                const change = Math.floor(Math.random() * 5) - 2;
+                currentPlayers = Math.min(Math.max(currentPlayers + change, 20), 50);
+                totalPlayersElem.innerText = currentPlayers;
+                if (headerOnlineElem) headerOnlineElem.innerText = currentPlayers;
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
